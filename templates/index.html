@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利息轉換器</title>
+</head>
+<body>
+    <h1>利息轉換器</h1>
+    <form id="interestForm">
+        <label for="principal">存款金額：</label>
+        <input type="number" id="principal" name="principal" required><br><br>
+
+        <label for="rate">利率（%）：</label>
+        <input type="number" id="rate" name="rate" required><br><br>
+
+        <label for="interest">利息：</label>
+        <input type="number" id="interest" name="interest" required><br><br>
+
+        <label for="days">利息計算天數：</label>
+        <input type="number" id="days" name="days" required><br><br>
+
+        <button type="button" onclick="calculateInterest()">計算利息</button>
+        <button type="button" onclick="calculateRate()">計算利率</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        function calculateInterest() {
+            var principal = document.getElementById('principal').value;
+            var rate = document.getElementById('rate').value;
+            var days = document.getElementById('days').value;
+
+            fetch('/calculate_interest', {
+                method: 'POST',
+                body: new URLSearchParams({ principal, rate, days }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `在${days}天後，根據利率${rate}%，您的利息為：${data.interest}`;
+            });
+        }
+
+        function calculateRate() {
+            var principal = document.getElementById('principal').value;
+            var interest = document.getElementById('interest').value;
+            var days = document.getElementById('days').value;
+
+            fetch('/calculate_rate', {
+                method: 'POST',
+                body: new URLSearchParams({ principal, interest, days }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerText = `在${days}天後，根據利息${interest}，您的利率為：${data.rate}%`;
+            });
+        }
+    </script>
+</body>
+</html>
